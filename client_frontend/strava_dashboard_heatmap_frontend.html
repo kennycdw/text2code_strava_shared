@@ -1,0 +1,29 @@
+<div id="cal-heatmap"></div>
+<script type="text/javascript">
+    // Extract the `id` parameter from the URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const analyticsId = urlParams.get('analytics') || '4ik41YnN0F'; 
+
+    // Initialize CalHeatMap with the dynamic data URL
+    var cal = new CalHeatMap();
+    cal.init({
+        domain: "month",
+        subDomain: "day",
+        cellSize: 15,
+        cellPadding: 3,
+        domainGutter: 10,
+        tooltip: true,
+        highlight: "now",
+        itemName: ['km', 'km'],
+        subDomainTextFormat: function (date, value) {
+            return value;
+        },
+        animationDuration: 1500,
+        start: new Date(2023, 12, 31),
+        label: { position: "top" },
+        displayLegend: true,
+        // Use dynamic URL with the extracted analyticsId
+        data: `https://stravav2.kennyvectors.com/stravajson/aggregations-heatmap_json?id=${analyticsId}`,
+        dataType: "json",
+    });
+</script>

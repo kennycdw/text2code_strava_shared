@@ -1,0 +1,45 @@
+<!-- In your HTML head or at the end of body -->
+<script type="text/javascript" src="//d3js.org/d3.v3.min.js"></script>
+<script type="text/javascript" src="//cdn.jsdelivr.net/cal-heatmap/3.3.10/cal-heatmap.min.js"></script>
+<link rel="stylesheet" href="//cdn.jsdelivr.net/cal-heatmap/3.3.10/cal-heatmap.css" />
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Constants
+    const API_BASE_URL = 'https://stravav2.kennyvectors.com/stravajson?id=4ik41YnN0F';
+    
+    // Fetch and update data
+    async function updateDashboard() {
+        try {
+			const response = await fetch(`${API_BASE_URL}`);
+
+			const response_data = await response.json();
+
+			// Update counter (only once)	
+			document.getElementsByClassName("elementor-counter-number")[0].setAttribute("data-to-value", response_data.summary.total_distance_current_year);
+			
+			// Update numbers
+			function updateElement(tag, value) {
+            const element = document.querySelector(tag);
+            if (element) {
+                element.textContent = value;
+            } else {
+                console.warn(`Element <${tag}> not found`);
+            }}
+
+			//console.log(response_data);
+			updateElement('last_updated', response_data.last_updated);
+			updateElement('total_distance_current_year', response_data.summary.total_distance_current_year);
+			updateElement('total_distance', response_data.summary.total_distance);
+			updateElement('latest_activity_date', response_data.latest_activity.date);
+			updateElement('latest_activity_distance', response_data.latest_activity.distance);
+			updateElement('latest_activity_type', response_data.latest_activity.type);
+			
+        } catch (error) {
+            console.error('Error fetching Strava data:', error);
+        }
+    }
+    
+    // Initialize
+    updateDashboard();
+});
+</script>

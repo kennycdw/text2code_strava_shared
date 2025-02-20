@@ -1,0 +1,60 @@
+<!-- In your HTML head or at the end of body -->
+<script type="text/javascript" src="//d3js.org/d3.v3.min.js"></script>
+<script type="text/javascript" src="//cdn.jsdelivr.net/cal-heatmap/3.3.10/cal-heatmap.min.js"></script>
+<link rel="stylesheet" href="//cdn.jsdelivr.net/cal-heatmap/3.3.10/cal-heatmap.css" />
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Constants
+    const API_BASE_URL = 'https://stravav2.kennyvectors.com';
+    
+    // Get analytics ID from URL parameters
+    const urlParams = new URLSearchParams(window.location.search);
+    const analyticsId = urlParams.get('analytics') || '4ik41YnN0F'; // Default ID as fallback
+    
+    // Fetch and update data
+    async function updateDashboard() {
+        try {
+            const response_charts = await fetch(`${API_BASE_URL}/strava-charts?id=${analyticsId}`);
+			const response = await fetch(`${API_BASE_URL}/stravajson?id=${analyticsId}`);
+
+            const chart_data = await response_charts.json();
+			const response_data = await response.json();
+            // Update charts
+            Object.keys(chart_data).forEach(chartKey => {
+				const vizElement = document.querySelector(chartKey);
+				if (vizElement) {
+					vizElement.innerHTML = chart_data[chartKey].embed_code_responsive;
+				}
+			});
+            
+			// Update counter (only once)	//document.getElementsByClassName("elementor-counter-number")[0].setAttribute("data-to-value", response_data.summary.total_distance_current_year);
+			
+			
+			// Update numbers
+			function updateElement(tag, value) {
+            const element = document.querySelector(tag);
+            if (element) {
+                element.textContent = value;
+            } else {
+                console.warn(`Element <${tag}> not found`);
+            }}			
+			
+			updateElement('last_updated', response_data.last_updated);
+            updateElement('first_name', response_data.first_name);
+			updateElement('total_distance_current_year', response_data.summary.total_distance_current_year);
+			updateElement('total_distance', response_data.summary.total_distance);
+			updateElement('latest_activity_date', response_data.latest_activity.date);
+			updateElement('latest_activity_distance', response_data.latest_activity.distance);
+			updateElement('latest_activity_type', response_data.latest_activity.type);
+			
+        } catch (error) {
+            console.error('Error fetching Strava data:', error);
+        }
+    }
+    
+    // Initialize
+    updateDashboard();
+});
+</script>
+
